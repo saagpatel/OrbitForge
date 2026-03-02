@@ -146,10 +146,10 @@ impl GpuGravity {
         masses: &[f64],
         g: f64,
         softening_sq: f64,
-    ) -> Vec<Vec3> {
+    ) -> Result<Vec<Vec3>, String> {
         let n = positions.len();
         if n == 0 {
-            return Vec::new();
+            return Ok(Vec::new());
         }
 
         // Pack body data: [px, py, pz, mass] as f32
@@ -222,7 +222,11 @@ impl GpuGravity {
         let (tx, rx) = std::sync::mpsc::channel();
         slice.map_async(wgpu::MapMode::Read, move |r| { let _ = tx.send(r); });
         self.device.poll(wgpu::Maintain::Wait);
-        rx.recv().unwrap().unwrap();
+        let map_status = rx
+            .recv()
+            .map_err(|_| "GPU readback channel dropped".to_string())?
+            .map_err(|err| format!("GPU readback mapping failed: {err:?}"))?;
+        let _ = map_status;
 
         let data = slice.get_mapped_range();
         let floats: &[f32] = bytemuck::cast_slice(&data);
@@ -238,7 +242,6 @@ impl GpuGravity {
         drop(data);
         readback_buf.unmap();
 
-        result
+        Ok(result)
     }
 }
-

@@ -74,12 +74,15 @@ impl OctreeNode {
 
             // Re-insert existing body
             self.insert_into_child(existing_idx, &existing_pos, existing_mass, depth);
+            self.accumulate_mass(&existing_pos, existing_mass);
         }
 
         // Insert new body into appropriate child
         self.insert_into_child(idx, pos, mass, depth);
+        self.accumulate_mass(pos, mass);
+    }
 
-        // Update aggregate
+    fn accumulate_mass(&mut self, pos: &Vec3, mass: f64) {
         let new_mass = self.total_mass + mass;
         if new_mass > 0.0 {
             self.center_of_mass = Vec3::new(
@@ -180,4 +183,115 @@ pub fn build_octree(positions: &[Vec3], masses: &[f64]) -> OctreeNode {
     }
 
     root
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn brute_accel(
+        positions: &[Vec3],
+        masses: &[f64],
+        i: usize,
+        g: f64,
+        softening_sq: f64,
+    ) -> Vec3 {
+        let mut accel = Vec3::zero();
+        let pos = positions[i];
+        for (j, other) in positions.iter().enumerate() {
+            if i == j {
+                continue;
+            }
+            let diff = *other - pos;
+            let dist_sq = diff.x * diff.x + diff.y * diff.y + diff.z * diff.z + softening_sq;
+            let dist = dist_sq.sqrt();
+            let force_mag = g * masses[j] / dist_sq;
+            accel += diff.scale(force_mag / dist);
+        }
+        accel
+    }
+
+    #[test]
+    fn octree_aggregates_mass_and_center_of_mass() {
+        let positions = vec![
+            Vec3::new(-2.0, 0.0, 0.0),
+            Vec3::new(2.0, 0.0, 0.0),
+            Vec3::new(0.0, 4.0, 0.0),
+        ];
+        let masses = vec![2.0, 3.0, 5.0];
+        let tree = build_octree(&positions, &masses);
+
+        let total_mass: f64 = masses.iter().sum();
+        let expected_com = Vec3::new(
+            (-2.0 * 2.0 + 2.0 * 3.0 + 0.0 * 5.0) / total_mass,
+            (0.0 * 2.0 + 0.0 * 3.0 + 4.0 * 5.0) / total_mass,
+            0.0,
+        );
+
+        assert!((tree.total_mass - total_mass).abs() < 1e-10);
+        assert!((tree.center_of_mass.x - expected_com.x).abs() < 1e-10);
+        assert!((tree.center_of_mass.y - expected_com.y).abs() < 1e-10);
+        assert!((tree.center_of_mass.z - expected_com.z).abs() < 1e-10);
+    }
+
+    #[test]
+    fn barnes_hut_matches_bruteforce_with_tight_theta() {
+        let mut positions = Vec::new();
+        let mut masses = Vec::new();
+        for i in 0..64 {
+            positions.push(Vec3::new(
+                (i as f64) * 2.0 - 50.0,
+                ((i % 7) as f64) * 3.0 - 8.0,
+                ((i % 5) as f64) * 1.5 - 3.0,
+            ));
+            masses.push(1.0 + (i % 11) as f64 * 0.2);
+        }
+
+        let tree = build_octree(&positions, &masses);
+        let g = 100.0;
+        let softening_sq = 100.0;
+        let theta = 0.01;
+
+        for i in 0..positions.len() {
+            let bh = tree.compute_acceleration(&positions[i], i, g, softening_sq, theta);
+            let brute = brute_accel(&positions, &masses, i, g, softening_sq);
+            assert!((bh.x - brute.x).abs() < 5e-6, "x mismatch at index {i}");
+            assert!((bh.y - brute.y).abs() < 5e-6, "y mismatch at index {i}");
+            assert!((bh.z - brute.z).abs() < 5e-6, "z mismatch at index {i}");
+        }
+    }
+
+    #[test]
+    fn tighter_theta_reduces_approximation_error() {
+        let mut positions = Vec::new();
+        let mut masses = Vec::new();
+        for i in 0..72 {
+            positions.push(Vec3::new(
+                (i as f64) * 1.7 - 40.0,
+                ((i % 9) as f64) * 2.5 - 9.0,
+                ((i % 6) as f64) * 1.2 - 3.0,
+            ));
+            masses.push(0.8 + (i % 13) as f64 * 0.15);
+        }
+
+        let tree = build_octree(&positions, &masses);
+        let g = 80.0;
+        let softening_sq = 64.0;
+        let loose_theta = 1.2;
+        let tight_theta = 0.2;
+
+        let mut loose_error = 0.0;
+        let mut tight_error = 0.0;
+
+        for i in 0..positions.len() {
+            let brute = brute_accel(&positions, &masses, i, g, softening_sq);
+            let loose = tree.compute_acceleration(&positions[i], i, g, softening_sq, loose_theta);
+            let tight = tree.compute_acceleration(&positions[i], i, g, softening_sq, tight_theta);
+
+            loose_error += (loose.x - brute.x).abs() + (loose.y - brute.y).abs() + (loose.z - brute.z).abs();
+            tight_error += (tight.x - brute.x).abs() + (tight.y - brute.y).abs() + (tight.z - brute.z).abs();
+        }
+
+        assert!(tight_error < loose_error, "tight theta should reduce aggregate error");
+    }
 }

@@ -1,4 +1,11 @@
 {
-  "buildMs": 0,
-  "capturedAt": "1970-01-01T00:00:00.000Z"
+  "buildMs": 2598,
+  "runs": 2,
+  "samplesMs": [
+    2598,
+    2567
+  ],
+  "capturedAt": "2026-03-02T01:33:14.775Z",
+  "command": "npm_execpath run build",
+  "note": "Baseline captured after backend hardening and deterministic two-run measurement update."
 }

@@ -58,6 +58,8 @@ export function ControlPanel({
   const toggleMissions = useSimStore((s) => s.toggleMissions);
   const audioEnabled = useSimStore((s) => s.audioEnabled);
   const toggleAudio = useSimStore((s) => s.toggleAudio);
+  const audioVolume = useSimStore((s) => s.audioVolume);
+  const setAudioVolume = useSimStore((s) => s.setAudioVolume);
   const recording = useSimStore((s) => s.recording);
   const placementZ = useSimStore((s) => s.placementZ);
   const setPlacementZ = useSimStore((s) => s.setPlacementZ);
@@ -177,6 +179,22 @@ export function ControlPanel({
           ))}
         </div>
       </div>
+
+      {audioEnabled && (
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-white/60 text-xs w-12">Volume</span>
+          <input
+            type="range"
+            min={0}
+            max={1}
+            step={0.05}
+            value={audioVolume}
+            onChange={(e) => setAudioVolume(parseFloat(e.target.value))}
+            className="flex-1 accent-blue-400"
+          />
+          <span className="text-white/50 text-xs w-8 text-right">{Math.round(audioVolume * 100)}%</span>
+        </div>
+      )}
 
       <div className="mb-3">
         <span className="text-white/60 text-xs block mb-1.5">Scenarios:</span>

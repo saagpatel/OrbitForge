@@ -61,7 +61,7 @@ Simulation runs at 120Hz on a background thread. Rendering is decoupled via requ
 | `F11` | Screenshot mode |
 | `F12` | Take screenshot |
 
-Mouse: click to select, scroll to zoom, drag to orbit camera. In **Place** mode, click to drop a body and drag to set its velocity. **Slingshot** mode works the same way but reversed.
+Mouse: click to select, scroll to zoom, drag to orbit camera. In **Place** mode, click to drop a body. Use **Slingshot** mode and drag to set launch velocity.
 
 ## Tech Stack
 
@@ -115,6 +115,12 @@ Tradeoff:
 - Lower disk usage after each session.
 - Slower startup on the next run because build caches are intentionally discarded.
 
+Workspace note:
+
+- For best reliability, use a workspace path that does not contain `:`.
+- You can run `bash scripts/dev/check-workspace-path.sh` to validate your current path.
+- You can migrate to a canonical path with `bash scripts/dev/migrate-to-canonical-path.sh`.
+
 ## Cleanup Commands
 
 Targeted cleanup (heavy build artifacts only, keeps dependencies):
@@ -129,6 +135,16 @@ Full local cleanup (all reproducible local caches, including dependencies):
 pnpm run clean:local
 ```
 
+## Verification Commands
+
+Run full local verification with the canonical command list:
+
+```bash
+bash .codex/scripts/run_verify_commands.sh
+```
+
+Canonical command definitions live in `.codex/verify.commands`.
+
 ## Features at a Glance
 
 - 9 preset scenarios + procedural generation
@@ -137,7 +153,7 @@ pnpm run clean:local
 - Hohmann transfer calculator
 - Gravity assist planner
 - Mission system with objectives
-- Minimap navigation
+- Minimap overview
 - Body info panel with orbital elements
 - Energy graph (kinetic + potential + total)
 - Lagrange point visualization
@@ -146,3 +162,4 @@ pnpm run clean:local
 - Save / Load / Share (JSON + clipboard)
 - Video recording (WebM export)
 - Spatial audio tied to collisions and events
+- Audio volume slider in the control panel

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import type { SimulationFrame, InteractionMode, ScenarioInfo, EnergyData } from "./types";
 import type { MissionProgress } from "./missions/MissionDefinition";
+import { MISSIONS } from "./missions/missions";
 
 interface SimStore {
   frame: SimulationFrame | null;
@@ -115,10 +116,14 @@ export const useSimStore = create<SimStore>((set) => ({
   toggleAudio: () => set((s) => ({ audioEnabled: !s.audioEnabled })),
   setAudioVolume: (vol) => set({ audioVolume: vol }),
   setActiveMission: (id) => set((s) => ({
+    // Keep status array aligned with the selected mission's objective count.
+    // This avoids "never complete" states caused by trailing default false values.
+    // Fallback to a single slot if mission metadata is unavailable.
+    // (Unknown mission IDs should still remain safely trackable.)
     activeMission: id,
     missionProgress: id ? {
       missionId: id,
-      objectiveStatus: Array(10).fill(false),
+      objectiveStatus: Array(MISSIONS.find((m) => m.id === id)?.objectives.length ?? 1).fill(false),
       startTick: s.frame?.tick ?? 0,
       spacecraftId: null,
       completed: false,

@@ -7,18 +7,32 @@ if (!npmExecPath) {
   process.exit(1);
 }
 
-const start = Date.now();
-const result = spawnSync(process.execPath, [npmExecPath, "run", "build"], {
-  stdio: "inherit",
-});
-const end = Date.now();
+const runs = Math.max(1, Number(process.env.PERF_BUILD_RUNS || 2));
+const durations = [];
+
+for (let i = 0; i < runs; i += 1) {
+  const start = Date.now();
+  const result = spawnSync(process.execPath, [npmExecPath, "run", "build"], {
+    stdio: "inherit",
+  });
+  const end = Date.now();
+  durations.push(end - start);
+  if (result.status !== 0) {
+    process.exit(result.status ?? 1);
+  }
+}
+
+const sorted = [...durations].sort((a, b) => a - b);
+const median = sorted[Math.floor(sorted.length / 2)];
 
 mkdirSync(".perf-results", { recursive: true });
 writeFileSync(
   ".perf-results/build-time.json",
   JSON.stringify(
     {
-      buildMs: end - start,
+      buildMs: median,
+      runs,
+      samplesMs: durations,
       capturedAt: new Date().toISOString(),
       command: "npm_execpath run build",
     },
@@ -26,7 +40,3 @@ writeFileSync(
     2,
   ),
 );
-
-if (result.status !== 0) {
-  process.exit(result.status ?? 1);
-}

@@ -1,5 +1,14 @@
 # codex-os-managed
 pnpm git:guard:all
+STRICT_WORKSPACE_PATH=1 pnpm run dev:path:check
+pnpm lint
+pnpm test
+pnpm test:rust
+pnpm build
 pnpm perf:bundle
 pnpm perf:build
 pnpm perf:assets
+pnpm perf:memory
+node scripts/perf/compare-metric.mjs .perf-baselines/bundle.json .perf-results/bundle.json totalBytes 0.08
+node scripts/perf/compare-metric.mjs .perf-baselines/build-time.json .perf-results/build-time.json buildMs 0.15
+PERF_REQUIRED_METRICS=bundle,build,assets,memory PERF_ENFORCE_SUMMARY=1 pnpm perf:summary
