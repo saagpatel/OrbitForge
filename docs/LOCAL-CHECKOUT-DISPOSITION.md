@@ -14,7 +14,7 @@ missing colon) is a typo-induced sibling clone and should be removed.
 
 | Path | Branch tip | Status |
 |---|---|---|
-| `/Users/d/Projects/Fun:GamePrjs/OrbitForge` | `codex/chore/bootstrap-codex-os` at `07ef263` (feat: harden runtime safety and release gates) | **Canonical** — work here. |
+| `/Users/d/Projects/Fun:GamePrjs/OrbitForge` | `master` at `8f7d64a` (docs: identify canonical local checkout and document typo-dup disposition) | **Canonical** — work here. |
 | `/Users/d/Projects/FunGamePrjs/OrbitForge` | `codex/chore/bootstrap-codex-os` at `a383f37` (chore: finalize codex os bootstrap baseline) | Stale — one commit behind canonical and ~61 dirty files of abandoned WIP. |
 
 Both copies point `origin` at the same GitHub repository
@@ -141,6 +141,6 @@ For full feature detail see `README.md`.
 | Field | Value |
 |---|---|
 | Canonical remote | `https://github.com/saagpatel/OrbitForge.git` |
-| Last meaningful commit (canonical clone) | `07ef263` feat(reliability): harden runtime safety and release gates |
+| Last meaningful commit (canonical clone) | `8f7d64a` docs: identify canonical local checkout and document typo-dup disposition |
 | Last commit on stale dup | `a383f37` chore(repo): finalize codex os bootstrap baseline |
 | Default branch | `master` |
