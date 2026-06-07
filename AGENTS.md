@@ -1,4 +1,7 @@
+# codex-os-managed
+
 <!-- portfolio-context:start -->
+
 # Portfolio Context
 
 ## What This Project Is
@@ -11,14 +14,14 @@ The repo is work-in-progress game/simulation product work. Core simulator behavi
 
 ## Stack
 
-| Layer | Technology |
-|-------|------------|
-| Desktop shell | Tauri 2 |
+| Layer          | Technology                  |
+| -------------- | --------------------------- |
+| Desktop shell  | Tauri 2                     |
 | Physics engine | Rust + wgpu compute shaders |
-| Rendering | React 19 + Three.js |
-| Language | TypeScript 5 |
+| Rendering      | React 19 + Three.js         |
+| Language       | TypeScript 5                |
 
-> **Status: Work in Progress** — Core simulator and all 9 scenarios are functional. UI polish and packaging ongoing.
+> **Status: Work in Progress** - Core simulator and all 9 scenarios are functional. UI polish and packaging ongoing.
 
 ## How To Run
 
@@ -38,6 +41,45 @@ pnpm tauri dev
 
 ## Next Recommended Move
 
-Add only the context file for this recovery pass, then continue with UI polish, packaging, and verification of the physics/rendering boundary.
+Continue from the canonical checkout with UI polish, packaging, and verification of the physics/rendering boundary.
 
 <!-- portfolio-context:end -->
+
+<!-- comm-contract:start -->
+
+## Communication Contract (Global)
+
+- Follow `/Users/d/.codex/policies/communication/BigPictureReportingV1.md` for all user-facing updates.
+- Use exact section labels from `BigPictureReportingV1.md` for formal delivery, blocker, waiting, risk, decision, or explicit status/report requests.
+- Keep ordinary in-flight updates conversational, warm, PM-readable, operator-grade, and low-noise.
+- Keep technical details in internal artifacts unless explicitly requested by the user or required by failure, risk, or verification.
+- Honor toggles literally: `simple mode`, `show receipts`, `tech mode`, `debug mode`.
+
+<!-- comm-contract:end -->
+
+<!-- codex-execution-contract:start -->
+
+# Codex Execution Contract
+
+## Definition of Done (Git + Performance)
+
+- Work on non-default branch only.
+- Branch must match `codex/<type>/<slug>`.
+- Commit messages must follow Conventional Commits.
+- Commits must be atomic by concern.
+- PR must include sections: What, Why, How, Testing, Performance impact, Risk / Notes.
+- If lockfile changed, include lockfile rationale in PR body.
+- Required checks before done-state:
+  - git hygiene
+  - bundle delta
+  - build delta
+  - performance budgets
+  - assets/memory checks
+- Required gates block completion when `fail` or `not-run`.
+
+## Verification Contract
+
+- Canonical commands are in `.codex/verify.commands`.
+- Use `.codex/scripts/run_verify_commands.sh` for deterministic execution.
+
+<!-- codex-execution-contract:end -->

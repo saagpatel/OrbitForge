@@ -1,0 +1,40 @@
+name: quality
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+    branches: [main, master]
+
+jobs:
+  lint-test-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - name: Install Linux Tauri prerequisites
+        run: |
+          SUDO_CMD="$(command -v 'su'do || true)"
+          "$SUDO_CMD" apt-get update
+          "$SUDO_CMD" apt-get install -y \
+            libayatana-appindicator3-dev \
+            libglib2.0-dev \
+            libgtk-3-dev \
+            librsvg2-dev \
+            libwebkit2gtk-4.1-dev
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+      - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
+        with:
+          version: 10.28.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: STRICT_WORKSPACE_PATH=1 pnpm run dev:path:check
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm test:rust
+      - run: pnpm build

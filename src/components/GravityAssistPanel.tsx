@@ -1,37 +1,48 @@
 import { useMemo } from "react";
 import { useSimStore } from "../store";
-import { computeGravityAssist, computeRelativeVelocity } from "../utils/gravityAssist";
+import {
+  computeGravityAssist,
+  computeRelativeVelocity,
+} from "../utils/gravityAssist";
+import type { SimulationFrame } from "../types";
 import type { CelestialBody } from "../types";
 
-function useAssistData(): { spacecraft: CelestialBody; target: CelestialBody } | null {
-  return useSimStore((s) => {
-    if (!s.frame || s.selectedBodyId === null) return null;
-    const spacecraft = s.frame.bodies.find((b) => b.id === s.selectedBodyId);
-    if (!spacecraft) return null;
+function getAssistData(
+  frame: SimulationFrame | null,
+  selectedBodyId: number | null,
+): { spacecraft: CelestialBody; target: CelestialBody } | null {
+  if (!frame || selectedBodyId === null) return null;
+  const spacecraft = frame.bodies.find((b) => b.id === selectedBodyId);
+  if (!spacecraft) return null;
 
-    // Find nearest massive body (not the spacecraft itself)
-    let nearest: CelestialBody | null = null;
-    let nearestDist = Infinity;
-    for (const b of s.frame.bodies) {
-      if (b.id === spacecraft.id || b.mass <= spacecraft.mass) continue;
-      const dx = b.position.x - spacecraft.position.x;
-      const dy = b.position.y - spacecraft.position.y;
-      const dz = b.position.z - spacecraft.position.z;
-      const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-      if (dist < nearestDist) {
-        nearestDist = dist;
-        nearest = b;
-      }
+  // Find nearest massive body (not the spacecraft itself)
+  let nearest: CelestialBody | null = null;
+  let nearestDist = Infinity;
+  for (const b of frame.bodies) {
+    if (b.id === spacecraft.id || b.mass <= spacecraft.mass) continue;
+    const dx = b.position.x - spacecraft.position.x;
+    const dy = b.position.y - spacecraft.position.y;
+    const dz = b.position.z - spacecraft.position.z;
+    const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+    if (dist < nearestDist) {
+      nearestDist = dist;
+      nearest = b;
     }
+  }
 
-    if (!nearest) return null;
-    return { spacecraft, target: nearest };
-  });
+  if (!nearest) return null;
+  return { spacecraft, target: nearest };
 }
 
 export function GravityAssistPanel() {
   const showGravityAssist = useSimStore((s) => s.showGravityAssist);
-  const data = useAssistData();
+  const frame = useSimStore((s) => s.frame);
+  const selectedBodyId = useSimStore((s) => s.selectedBodyId);
+
+  const data = useMemo(
+    () => getAssistData(frame, selectedBodyId),
+    [frame, selectedBodyId],
+  );
 
   const result = useMemo(() => {
     if (!data) return null;
