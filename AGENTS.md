@@ -1,3 +1,5 @@
+# codex-os-managed
+
 <!-- portfolio-context:start -->
 
 # Portfolio Context
@@ -39,20 +41,25 @@ pnpm tauri dev
 
 ## Next Recommended Move
 
-Continue with UI polish, packaging, and verification of the physics/rendering boundary from the canonical checkout.
+Continue from the canonical checkout with UI polish, packaging, and verification of the physics/rendering boundary.
 
 <!-- portfolio-context:end -->
+
+<!-- comm-contract:start -->
+
+## Communication Contract (Global)
+
+- Follow `/Users/d/.codex/policies/communication/BigPictureReportingV1.md` for all user-facing updates.
+- Use exact section labels from `BigPictureReportingV1.md` for formal delivery, blocker, waiting, risk, decision, or explicit status/report requests.
+- Keep ordinary in-flight updates conversational, warm, PM-readable, operator-grade, and low-noise.
+- Keep technical details in internal artifacts unless explicitly requested by the user or required by failure, risk, or verification.
+- Honor toggles literally: `simple mode`, `show receipts`, `tech mode`, `debug mode`.
+
+<!-- comm-contract:end -->
 
 <!-- codex-execution-contract:start -->
 
 # Codex Execution Contract
-
-## Communication Contract
-
-- Follow `/Users/d/.codex/policies/communication/BigPictureReportingV1.md` for all user-facing formal delivery, blocker, waiting, risk, decision, or explicit status/report updates.
-- Keep ordinary in-flight updates conversational, warm, PM-readable, operator-grade, and low-noise.
-- Keep technical details in internal artifacts unless explicitly requested by the user or required by failure, risk, or verification.
-- Honor toggles literally: `simple mode`, `show receipts`, `tech mode`, `debug mode`.
 
 ## Definition of Done (Git + Performance)
 
