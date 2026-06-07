@@ -12,12 +12,12 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
-      - uses: dtolnay/rust-toolchain@9a824f1f10fbd66d1bbf8a8561366aaba8a2dd13
+      - uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: stable
       - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
         with:
-          version: 10.28.1
+          version: 10.28.2
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: 20
