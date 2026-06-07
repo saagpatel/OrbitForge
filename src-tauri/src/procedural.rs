@@ -102,3 +102,30 @@ pub fn generate_system(
 
     state.prime_accelerations();
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::HashSet;
+
+    #[test]
+    fn generate_system_creates_star_and_requested_planets() {
+        let mut sim = SimulationState::new();
+
+        generate_system(&mut sim, 50_000.0, 6, 120.0, 1_000.0);
+
+        assert_eq!(sim.bodies.len(), 7);
+        assert_eq!(sim.bodies[0].name, "Star");
+        assert!(sim.bodies[0].is_fixed);
+        assert!(sim.bodies.iter().skip(1).all(|body| !body.is_fixed));
+
+        let ids: HashSet<u32> = sim.bodies.iter().map(|body| body.id).collect();
+        assert_eq!(ids.len(), sim.bodies.len());
+        assert!(sim
+            .bodies
+            .iter()
+            .skip(1)
+            .all(|body| body.position.magnitude() >= 120.0));
+        assert!(sim.validate().is_ok());
+    }
+}

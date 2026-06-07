@@ -1,6 +1,10 @@
 import { invoke } from "@tauri-apps/api/core";
 
-async function compress(data: string): Promise<string> {
+async function getClipboardManager() {
+  return import("@tauri-apps/plugin-clipboard-manager");
+}
+
+export async function encodeSharedState(data: string): Promise<string> {
   const encoder = new TextEncoder();
   const input = encoder.encode(data);
   const cs = new CompressionStream("gzip");
@@ -24,7 +28,7 @@ async function compress(data: string): Promise<string> {
   return btoa(binary);
 }
 
-async function decompress(base64: string): Promise<string> {
+export async function decodeSharedState(base64: string): Promise<string> {
   const binary = atob(base64);
   const bytes = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i++) {
@@ -42,17 +46,25 @@ async function decompress(base64: string): Promise<string> {
     chunks.push(value);
   }
   const decoder = new TextDecoder();
-  return chunks.map((c) => decoder.decode(c, { stream: true })).join("") + decoder.decode();
+  return (
+    chunks.map((c) => decoder.decode(c, { stream: true })).join("") +
+    decoder.decode()
+  );
 }
 
 export async function shareState(): Promise<void> {
   const json = await invoke<string>("export_state");
-  const compressed = await compress(json);
-  await navigator.clipboard.writeText(compressed);
+  const compressed = await encodeSharedState(json);
+  const { writeText } = await getClipboardManager();
+  await writeText(compressed);
 }
 
 export async function importShared(): Promise<void> {
-  const compressed = await navigator.clipboard.readText();
-  const json = await decompress(compressed);
+  const { readText } = await getClipboardManager();
+  const compressed = await readText();
+  if (!compressed) {
+    throw new Error("Clipboard does not contain shared OrbitForge state.");
+  }
+  const json = await decodeSharedState(compressed);
   await invoke("import_state", { json });
 }

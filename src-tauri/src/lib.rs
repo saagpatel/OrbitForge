@@ -20,7 +20,13 @@ pub fn run() {
 
     // Init GPU gravity (best-effort, falls back to CPU)
     {
-        let mut sim = sim_state.lock().unwrap();
+        let mut sim = match sim_state.lock() {
+            Ok(guard) => guard,
+            Err(poisoned) => {
+                eprintln!("Simulation mutex was poisoned during GPU init; recovering.");
+                poisoned.into_inner()
+            }
+        };
         match gpu_gravity::GpuGravity::new() {
             Some(gpu) => {
                 sim.gpu = Some(Arc::new(gpu));
@@ -34,11 +40,18 @@ pub fn run() {
 
     // Load default scenario
     {
-        let mut sim = sim_state.lock().unwrap();
+        let mut sim = match sim_state.lock() {
+            Ok(guard) => guard,
+            Err(poisoned) => {
+                eprintln!("Simulation mutex was poisoned during scenario load; recovering.");
+                poisoned.into_inner()
+            }
+        };
         scenarios::load_sun_earth(&mut sim);
     }
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .manage(sim_state.clone() as SimState)
@@ -69,7 +82,13 @@ pub fn run() {
                     let start = Instant::now();
 
                     let (frame, collisions) = {
-                        let mut sim = state_clone.lock().unwrap();
+                        let mut sim = match state_clone.lock() {
+                            Ok(guard) => guard,
+                            Err(poisoned) => {
+                                eprintln!("Simulation mutex poisoned in tick loop; recovering.");
+                                poisoned.into_inner()
+                            }
+                        };
                         let collisions = sim.step();
                         let frame = sim.to_frame();
                         (frame, collisions)
