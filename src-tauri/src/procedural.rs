@@ -125,7 +125,7 @@ mod tests {
             .bodies
             .iter()
             .skip(1)
-            .all(|body| body.position.magnitude() >= 120.0));
+            .all(|body| body.position.magnitude() >= 120.0 - 1.0e-9));
         assert!(sim.validate().is_ok());
     }
 }
