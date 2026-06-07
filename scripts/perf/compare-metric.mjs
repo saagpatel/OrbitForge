@@ -18,6 +18,18 @@ if (typeof b !== "number" || typeof c !== "number") {
   process.exit(2);
 }
 
+if (!Number.isFinite(b) || !Number.isFinite(c)) {
+  console.error(`Metric ${metric} is not finite.`);
+  process.exit(2);
+}
+
+if (b <= 0) {
+  console.error(
+    `Baseline for ${metric} is ${b}. Recalibrate .perf-baselines before enforcing regression ratios.`,
+  );
+  process.exit(2);
+}
+
 const ratio = (c - b) / b;
 console.log(
   JSON.stringify({ metric, baseline: b, current: c, ratio }, null, 2),

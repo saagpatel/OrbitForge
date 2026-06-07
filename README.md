@@ -1,20 +1,81 @@
 # OrbitForge
 
-[![Rust](https://img.shields.io/badge/Rust-%23dea584?style=flat-square&logo=rust)](#) [![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?style=flat-square&logo=typescript)](#) [![Status](https://img.shields.io/badge/status-WIP-yellow?style=flat-square)](#)
+A real-time N-body gravity simulator where you can fling planets, crash stars, and pilot spacecraft through your own solar systems.
 
-> Real-time N-body gravity simulator — fling planets, crash stars, pilot spacecraft.
+Built with Rust physics, React/Three.js visuals, and Tauri 2 for the desktop shell.
 
-OrbitForge is a desktop gravity sandbox built with Rust physics and Three.js visuals. Place stars, planets, and spacecraft; watch gravity do its thing; fly through your own solar systems.
+![Tauri](https://img.shields.io/badge/Tauri_2-24C8D8?style=flat&logo=tauri&logoColor=white)
+![Rust](https://img.shields.io/badge/Rust-000000?style=flat&logo=rust&logoColor=white)
+![React](https://img.shields.io/badge/React_19-61DAFB?style=flat&logo=react&logoColor=black)
+![Three.js](https://img.shields.io/badge/Three.js-000000?style=flat&logo=threedotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white)
 
-## Features
+## What You Can Do
 
-- **N-body simulation** — Velocity Verlet integration; collisions merge bodies with momentum/mass/volume conservation
-- **Adaptive physics engine** — Brute-force O(n²) for <50 bodies, Barnes-Hut octree for 50–500, wgpu compute shader for 500+
-- **13 visualization layers** — Orbital elements, Lagrange points, Kepler swept areas, gravity heatmaps, energy graphs, and more
-- **Spacecraft flight** — WASD controls with Hohmann transfer and gravity-assist planning tools
-- **9 presets + procedural generator** — From "Sun & Earth" to galaxy collisions
+**Create** - Place stars, planets, and spacecraft. Drag to set velocity. Build anything from a simple orbit to a full solar system.
 
-## Quick Start
+**Simulate** - Watch gravity evolve at up to 8x speed. Velocity Verlet integration keeps motion stable. Collisions merge bodies with momentum, mass, and volume conservation.
+
+**Fly** - Select a spacecraft, use WASD, and thrust around. Shift doubles your power. Plan Hohmann transfers and gravity assists with the built-in tools.
+
+**Explore** - Toggle orbital elements, Lagrange points, Kepler swept areas, gravity field heatmaps, orbital planes, energy graphs, and more.
+
+## Scenarios
+
+| Preset             | What it is                            |
+| ------------------ | ------------------------------------- |
+| Sun & Earth        | The basics                            |
+| Inner Solar System | Mercury through Mars                  |
+| Outer Solar System | Jupiter through Neptune               |
+| Full Solar System  | All 8 planets                         |
+| Binary Star        | Two stars in orbit                    |
+| Figure-8           | Three bodies, one elegant loop        |
+| Inclined Solar     | Tilted orbital planes                 |
+| Asteroid Belt      | Hundreds of rocks                     |
+| Galaxy Collision   | Two spiral galaxies smashing together |
+
+Plus a procedural generator for creating custom systems.
+
+## Performance
+
+The physics engine scales automatically:
+
+| Bodies   | Algorithm           | Complexity      |
+| -------- | ------------------- | --------------- |
+| < 50     | Brute force         | O(n^2)          |
+| 50 - 500 | Barnes-Hut octree   | O(n log n)      |
+| 500+     | wgpu compute shader | GPU accelerated |
+
+Simulation runs at 120Hz on a background thread. Rendering is decoupled via `requestAnimationFrame`.
+
+## Controls
+
+| Key             | Action            |
+| --------------- | ----------------- |
+| `Space`         | Pause / Play      |
+| `R`             | Reset             |
+| `C`             | Clear all bodies  |
+| `Esc`           | Deselect          |
+| `W` `A` `S` `D` | Spacecraft thrust |
+| `Shift`         | Double thrust     |
+| `F11`           | Screenshot mode   |
+| `F12`           | Take screenshot   |
+
+Mouse: click to select, scroll to zoom, drag to orbit camera. In **Place** mode, click to drop a body. Use **Slingshot** mode and drag to set launch velocity.
+
+## Tech Stack
+
+| Layer          | Tech                                          |
+| -------------- | --------------------------------------------- |
+| Physics engine | Rust (Velocity Verlet, Barnes-Hut, wgpu)      |
+| Desktop shell  | Tauri 2                                       |
+| UI framework   | React 19 + Zustand                            |
+| 3D renderer    | Three.js (bloom, CSS2D labels, InstancedMesh) |
+| Build tools    | Vite, TypeScript strict mode                  |
+
+16 Tauri IPC commands bridge the Rust simulation thread and the React frontend.
+
+## Getting Started
 
 ```bash
 git clone https://github.com/saagpatel/OrbitForge.git
@@ -23,16 +84,82 @@ pnpm install
 pnpm tauri dev
 ```
 
-## Tech Stack
+Requires Rust, Node.js, pnpm, and the Tauri 2 prerequisites.
 
-| Layer | Technology |
-|-------|------------|
-| Desktop shell | Tauri 2 |
-| Physics engine | Rust + wgpu compute shaders |
-| Rendering | React 19 + Three.js |
-| Language | TypeScript 5 |
+## Normal Dev vs Lean Dev
 
-> **Status: Work in Progress** — Core simulator and all 9 scenarios are functional. UI polish and packaging ongoing.
+Use normal dev when you want fastest incremental rebuilds and do not care about local artifact growth.
+
+```bash
+pnpm tauri dev
+```
+
+Use lean dev when you want lower disk usage over long sessions.
+
+```bash
+pnpm run dev:lean
+```
+
+What lean dev changes:
+
+- Vite cache goes to a temporary directory (`$VITE_CACHE_DIR`) instead of `node_modules/.vite`.
+- Rust build output goes to a temporary directory (`$CARGO_TARGET_DIR`) instead of `src-tauri/target`.
+- On exit, temporary caches are removed and a targeted heavy-artifact cleanup runs.
+
+Tradeoff:
+
+- Lower disk usage after each session.
+- Slower startup on the next run because build caches are intentionally discarded.
+
+Workspace note:
+
+- Use `/Users/d/Projects/FunGamePrjs/OrbitForge` as the canonical local checkout.
+- Avoid the legacy colon-path checkout at `/Users/d/Projects/Fun:GamePrjs/OrbitForge` for active work.
+- Run `bash scripts/dev/check-workspace-path.sh` to validate your current path.
+- Run `bash scripts/dev/migrate-to-canonical-path.sh` to copy a local checkout to the canonical path.
+
+## Cleanup Commands
+
+Targeted cleanup (heavy build artifacts only, keeps dependencies):
+
+```bash
+pnpm run clean:heavy
+```
+
+Full local cleanup (all reproducible local caches, including dependencies):
+
+```bash
+pnpm run clean:local
+```
+
+## Verification Commands
+
+Run full local verification with the canonical command list:
+
+```bash
+bash .codex/scripts/run_verify_commands.sh
+```
+
+Canonical command definitions live in `.codex/verify.commands`.
+
+## Features at a Glance
+
+- 9 preset scenarios + procedural generation
+- Real-time collision detection with conservation laws
+- Orbit prediction and trail rendering
+- Hohmann transfer calculator
+- Gravity assist planner
+- Mission system with objectives
+- Minimap overview
+- Body info panel with orbital elements
+- Energy graph (kinetic + potential + total)
+- Lagrange point visualization
+- Kepler swept area display
+- Gravity field heatmap
+- Save / Load / Share (JSON + clipboard)
+- Video recording (WebM export)
+- Spatial audio tied to collisions and events
+- Audio volume slider in the control panel
 
 ## License
 

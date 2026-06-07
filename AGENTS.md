@@ -19,7 +19,7 @@ The repo is work-in-progress game/simulation product work. Core simulator behavi
 | Rendering      | React 19 + Three.js         |
 | Language       | TypeScript 5                |
 
-> **Status: Work in Progress** — Core simulator and all 9 scenarios are functional. UI polish and packaging ongoing.
+> **Status: Work in Progress** - Core simulator and all 9 scenarios are functional. UI polish and packaging ongoing.
 
 ## How To Run
 
@@ -39,7 +39,7 @@ pnpm tauri dev
 
 ## Next Recommended Move
 
-Add only the context file for this recovery pass, then continue with UI polish, packaging, and verification of the physics/rendering boundary.
+Continue with UI polish, packaging, and verification of the physics/rendering boundary from the canonical checkout.
 
 <!-- portfolio-context:end -->
 
@@ -50,7 +50,8 @@ Add only the context file for this recovery pass, then continue with UI polish, 
 ## Communication Contract
 
 - Follow `/Users/d/.codex/policies/communication/BigPictureReportingV1.md` for all user-facing formal delivery, blocker, waiting, risk, decision, or explicit status/report updates.
-- Keep ordinary in-flight updates conversational, PM-readable, operator-grade, and low-noise.
+- Keep ordinary in-flight updates conversational, warm, PM-readable, operator-grade, and low-noise.
+- Keep technical details in internal artifacts unless explicitly requested by the user or required by failure, risk, or verification.
 - Honor toggles literally: `simple mode`, `show receipts`, `tech mode`, `debug mode`.
 
 ## Definition of Done (Git + Performance)

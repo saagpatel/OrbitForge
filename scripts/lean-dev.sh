@@ -4,6 +4,10 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
+if [[ -x "$ROOT/scripts/dev/check-workspace-path.sh" ]]; then
+  "$ROOT/scripts/dev/check-workspace-path.sh" || true
+fi
+
 LEAN_TMP_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/orbitforge-lean.XXXXXX")"
 export VITE_CACHE_DIR="$LEAN_TMP_ROOT/vite-cache"
 export CARGO_TARGET_DIR="$LEAN_TMP_ROOT/cargo-target"

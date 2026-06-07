@@ -1,4 +1,8 @@
 {
-  "buildMs": 0,
-  "capturedAt": "1970-01-01T00:00:00.000Z"
+  "buildMs": 3178,
+  "runs": 2,
+  "samplesMs": [3178, 3006],
+  "capturedAt": "2026-03-14T12:09:00.000Z",
+  "command": "npm_execpath run build",
+  "note": "Baseline recalibrated on the canonical macOS local-RC workspace after metadata cleanup and test-source separation. Bundle output is unchanged; this refresh reflects current machine-local build timing."
 }
