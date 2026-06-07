@@ -6,6 +6,10 @@ branch="$(git rev-parse --abbrev-ref HEAD)"
 pattern='^codex/(feat|fix|chore|refactor|docs|test|perf|ci|spike|hotfix)/[a-z0-9]+(-[a-z0-9]+)*$'
 
 if [[ "$branch" == "main" || "$branch" == "master" ]]; then
+  if [[ -z "$(git status --porcelain)" ]]; then
+    echo "Clean $branch verification context; no direct work detected."
+    exit 0
+  fi
   echo "Direct work on $branch is blocked."
   exit 1
 fi
