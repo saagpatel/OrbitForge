@@ -1,5 +1,3 @@
-# codex-os-managed
-
 <!-- portfolio-context:start -->
 
 # Portfolio Context
@@ -47,39 +45,18 @@ Continue from the canonical checkout with UI polish, packaging, and verification
 
 <!-- comm-contract:start -->
 
-## Communication Contract (Global)
+## Communication Contract
 
-- Follow `/Users/d/.codex/policies/communication/BigPictureReportingV1.md` for all user-facing updates.
-- Use exact section labels from `BigPictureReportingV1.md` for formal delivery, blocker, waiting, risk, decision, or explicit status/report requests.
-- Keep ordinary in-flight updates conversational, warm, PM-readable, operator-grade, and low-noise.
-- Keep technical details in internal artifacts unless explicitly requested by the user or required by failure, risk, or verification.
-- Honor toggles literally: `simple mode`, `show receipts`, `tech mode`, `debug mode`.
-
+- Inherit global Codex communication and reporting rules from `/Users/d/.codex/AGENTS.override.md` and `/Users/d/.codex/policies/communication/BigPictureReportingV1.md`.
+- Repo-specific instructions below add project constraints only; do not restate global voice or status-reporting rules here.
 <!-- comm-contract:end -->
 
 <!-- codex-execution-contract:start -->
 
-# Codex Execution Contract
+## Inherited Operating Rules
 
-## Definition of Done (Git + Performance)
-
-- Work on non-default branch only.
-- Branch must match `codex/<type>/<slug>`.
-- Commit messages must follow Conventional Commits.
-- Commits must be atomic by concern.
-- PR must include sections: What, Why, How, Testing, Performance impact, Risk / Notes.
-- If lockfile changed, include lockfile rationale in PR body.
-- Required checks before done-state:
-  - git hygiene
-  - bundle delta
-  - build delta
-  - performance budgets
-  - assets/memory checks
-- Required gates block completion when `fail` or `not-run`.
-
-## Verification Contract
-
-- Canonical commands are in `.codex/verify.commands`.
-- Use `.codex/scripts/run_verify_commands.sh` for deterministic execution.
+- Inherit global git, review/fix, testing, docs, skill-use, and reporting gates from `/Users/d/.codex/AGENTS.md` and active session instructions.
+- Use `.codex/verify.commands` and `.codex/scripts/run_verify_commands.sh` as this repo-local verification authority when present.
+- Keep the portfolio constraints above as the source of truth for runtime, privacy, and release risks.
 
 <!-- codex-execution-contract:end -->
