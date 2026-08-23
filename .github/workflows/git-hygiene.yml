@@ -29,16 +29,16 @@ jobs:
   branch-name:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pull-requests: read
     steps:
-      - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b
-        with:
-          script: |
-            const branch = context.payload.pull_request?.head?.ref || "";
-            const pattern = /^codex\/(feat|fix|chore|refactor|docs|test|perf|ci|spike|hotfix)\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
-            if (!pattern.test(branch)) {
-              core.setFailed(`Invalid branch name: ${branch}`);
-            }
+      # Runs the repository's own guard rather than restating its rule. This job
+      # carried a second copy of the branch pattern and the two had drifted: the
+      # guard accepts <type>/<slug> and <agent>/<task-slug>, this copy accepted
+      # neither, so a branch the local hook blessed failed here. One rule, one
+      # place, pinned by the guard's own test suite.
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+      - run: bash scripts/git/guard-branch.sh
 
   secrets:
     runs-on: ubuntu-latest
