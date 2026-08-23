@@ -29,6 +29,7 @@ jobs:
   branch-name:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pull-requests: read
     steps:
       # Runs the repository's own guard rather than restating its rule. This job
