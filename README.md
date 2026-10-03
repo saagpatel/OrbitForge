@@ -84,7 +84,7 @@ pnpm install
 pnpm tauri dev
 ```
 
-Requires Rust, Node.js, pnpm, and the Tauri 2 prerequisites.
+Requires Rust, Node.js 22.19+ (22.x), pnpm 10.28.2, and the Tauri 2 prerequisites. CI uses Node.js 22.19.0, which satisfies the committed dependency engine floors.
 
 ## Normal Dev vs Lean Dev
 
