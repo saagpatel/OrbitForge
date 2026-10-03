@@ -8,7 +8,7 @@ OrbitForge is a desktop N-body gravity sandbox built with Rust physics and React
 
 ## Current State
 
-The repo is work-in-progress game/simulation product work. Core simulator behavior and nine scenarios are functional; UI polish and packaging are still ongoing. Existing untracked `.perf-results` are local artifacts and should not be swept into source commits.
+The repo is work-in-progress game/simulation product work. Core simulator behavior and nine scenarios are functional; UI polish and packaging are still ongoing. Generated `.perf-results` are local artifacts and should not be swept into source commits.
 
 ## Stack
 
