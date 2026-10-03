@@ -134,13 +134,41 @@ pnpm run clean:local
 
 ## Verification Commands
 
-Run full local verification with the canonical command list:
+Run from the repository root with pnpm 10.28.2 (the packageManager pin), a Node
+version supported by Vite 7 (20.19+ or 22.12+), Rust stable, and the native Tauri 2
+prerequisites for your platform. The full bundle also requires gitleaks for its
+local staged-secret guard; a missing scanner is not a successful scan.
 
 ```bash
+# Locked dependency install without running prepare/Husky lifecycle hooks
+pnpm install --frozen-lockfile --ignore-scripts
+
+# Focused frontend fixture test, broader frontend suite, strict TypeScript
+pnpm exec vitest run src/missions/MissionDefinition.test.ts
+pnpm test
+pnpm lint
+
+# Rust library tests and frontend production build
+pnpm test:rust
+pnpm build
+
+# Full local guard/quality/performance bundle
 bash .codex/scripts/run_verify_commands.sh
 ```
 
-Canonical command definitions live in `.codex/verify.commands`.
+`lint` is a TypeScript check, not ESLint. Canonical full-bundle definitions live in
+[.codex/verify.commands](.codex/verify.commands), with the gate context in
+[Verification](docs/execution/VERIFICATION.md). The bundle writes local build and
+`.perf-results` artifacts and checks the staged Git context; it does not publish
+an app. Run it on the intended review branch and preserve unrelated changes.
+The `clean:*`/lean-dev commands remove local artifacts and are not verification
+steps. Guard regression tests under `scripts/git/tests/` use temporary repositories.
+
+For rendering, controls, or report/overlay changes, also inspect the affected
+Tauri flow (or a browser for frontend-only behavior): preset loading, pause/play,
+mission state, and overlays using disposable simulation data. Physics/backend
+changes require the Rust lane as well as frontend checks; unit or performance
+results do not establish device/GPU behavior or release signing readiness.
 
 ## Features at a Glance
 
