@@ -42,11 +42,11 @@ The physics engine scales automatically:
 
 | Bodies   | Algorithm           | Complexity      |
 | -------- | ------------------- | --------------- |
-| < 50     | Brute force         | O(n^2)          |
-| 50 - 500 | Barnes-Hut octree   | O(n log n)      |
-| 500+     | wgpu compute shader | GPU accelerated |
+| <= 50    | Brute force         | O(n^2)          |
+| 51 - 500 | Barnes-Hut octree   | O(n log n)      |
+| > 500    | wgpu compute shader (Barnes-Hut fallback) | GPU accelerated when available |
 
-Simulation runs at 120Hz on a background thread. Rendering is decoupled via `requestAnimationFrame`.
+Simulation targets 120Hz on a background thread. Rendering is decoupled via `requestAnimationFrame`.
 
 ## Controls
 
@@ -126,7 +126,7 @@ Targeted cleanup (heavy build artifacts only, keeps dependencies):
 pnpm run clean:heavy
 ```
 
-Full local cleanup (all reproducible local caches, including dependencies):
+Full local cleanup (the heavy artifacts above plus `node_modules`):
 
 ```bash
 pnpm run clean:local
@@ -179,14 +179,14 @@ results do not establish device/GPU behavior or release signing readiness.
 - Gravity assist planner
 - Mission system with objectives
 - Minimap overview
-- Body info panel with orbital elements
+- Body info panel and separate orbital elements HUD
 - Energy graph (kinetic + potential + total)
 - Lagrange point visualization
 - Kepler swept area display
 - Gravity field heatmap
 - Save / Load / Share (JSON + clipboard)
 - Video recording (WebM export)
-- Spatial audio tied to collisions and events
+- Audio tied to collisions, with an ambient drone
 - Audio volume slider in the control panel
 
 ## License
