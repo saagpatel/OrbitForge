@@ -8,7 +8,7 @@ Keep this repository lean and deterministic:
 - Do not commit editor metadata, OS artifacts, logs, or temporary files.
 - Keep tracking limited to source, config, and required assets.
 
-The current ignore policy in `/Users/d/Projects/OrbitForge/.gitignore` covers common local clutter, including:
+The current ignore policy in [.gitignore](.gitignore) covers common local clutter, including:
 
 - dependency/build output (`node_modules/`, `dist/`, `src-tauri/target/`, `src-tauri/gen/`)
 - OS/editor artifacts (`.DS_Store`, `.vscode/`, `.idea/`, swap files)
@@ -26,7 +26,7 @@ Use `.gitkeep` only for required structure (for example, runtime-created folders
 
 ## Basic Verification Before Commit
 
-- `git status --short`
-- `pnpm run build`
-
-These commands come from local Git usage and `/Users/d/Projects/OrbitForge/package.json` (`scripts.build`).
+Inspect `git status --short`, then follow [README verification](README.md#verification-commands)
+for the pinned environment, focused and broader frontend/Rust checks, build,
+and full guard/performance bundle. [package.json](package.json) and
+[.codex/verify.commands](.codex/verify.commands) define the actual commands.
